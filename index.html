@@ -45,11 +45,18 @@
         </section>
 
         <div class="game-controls">
+            <label class="difficulty-control" for="difficulty-select">
+                Difficulty
+                <select id="difficulty-select">
+                    <option value="standard">Standard</option>
+                    <option value="easy">Easy</option>
+                </select>
+            </label>
             <button class="button button-primary" id="start-button" type="button">Start game</button>
             <button class="button button-secondary" id="restart-button" type="button" hidden>Play again</button>
-            <p class="control-hint">Catch dirty and red drops for points, and keep them out of the tank for a 50-point bonus. Clean drops are less common; red drops add 3x the contamination time. At 7 seconds, more and faster drops appear.</p>
+            <p class="control-hint">Catch dirty and red drops for points, and keep them out of the tank for a 50-point bonus. Clean drops are less common; red drops add 3x the contamination time. Standard speeds up at 7 seconds; Easy starts at 15 seconds and never speeds up.</p>
         </div>
-        <footer>Clean water changes everything. <span>charity: water</span></footer>
+        <footer>Clean water changes everything. <a href="https://www.charitywater.org/">charity: water</a></footer>
     </main>
     <script src="script.js"></script>
 </body>

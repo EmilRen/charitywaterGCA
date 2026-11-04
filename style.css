@@ -23,7 +23,7 @@ body {
     background-color: #F3FAFC;
     background-image: radial-gradient(#B9E1EE 1px, transparent 1px);
     background-size: 22px 22px;
-    font-family: "Trebuchet MS", Arial, sans-serif;
+    font-family: "Proxima Nova", Arial, sans-serif;
 }
 
 button {
@@ -264,6 +264,29 @@ h1 span {
     background: var(--yellow);
 }
 
+.difficulty-control {
+    display: flex;
+    min-height: 44px;
+    align-items: center;
+    gap: 8px;
+    font-weight: 800;
+}
+
+.difficulty-control select {
+    min-height: 44px;
+    padding: 0 30px 0 10px;
+    border: 2px solid var(--ink);
+    border-radius: 6px;
+    color: var(--ink);
+    background-color: var(--white);
+    font: inherit;
+}
+
+.difficulty-control select:focus-visible {
+    outline: 3px solid var(--blue);
+    outline-offset: 3px;
+}
+
 .button-secondary {
     color: var(--ink);
     background: var(--white);
@@ -297,9 +320,18 @@ footer {
     text-align: center;
 }
 
-footer span {
+footer a {
     color: var(--ink);
     font-weight: 800;
+}
+
+footer a:hover {
+    color: #126E9F;
+}
+
+footer a:focus-visible {
+    outline: 3px solid var(--blue);
+    outline-offset: 3px;
 }
 
 @media (max-width: 480px) {

@@ -16,6 +16,7 @@ const messageText = document.querySelector('#message-text');
 const startButton = document.querySelector('#start-button');
 const restartButton = document.querySelector('#restart-button');
 const waterTank = document.querySelector('#water-tank');
+const difficultySelect = document.querySelector('#difficulty-select');
 
 // These variables keep track of the game's current state and displayed values.
 let score = 0;
@@ -23,6 +24,7 @@ let timeRemaining = 30;
 let contaminationMultiplier = 1;
 let dirtyDropHitTank = false;
 let lateGameStarted = false;
+let easyMode = false;
 
 // Store each active droplet here so the game can move it, check it, and remove it.
 let droplets = [];
@@ -46,7 +48,8 @@ function startGame() {
 
 	// Restore all gameplay values to their starting amounts and empty the droplet list.
 	score = 0;
-	timeRemaining = 30;
+	easyMode = difficultySelect.value === 'easy';
+	timeRemaining = easyMode ? 15 : 30;
 	contaminationMultiplier = 1;
 	dirtyDropHitTank = false;
 	lateGameStarted = false;
@@ -64,6 +67,7 @@ function startGame() {
 	messageBox.hidden = true;
 	startButton.hidden = true;
 	restartButton.hidden = false;
+	difficultySelect.disabled = true;
 
 	// Add a new droplet every 850 milliseconds and count down once each second.
 	// The animation frame loop moves droplets smoothly between those timer ticks.
@@ -174,7 +178,7 @@ function handleDropHit(event) {
 	// Dirty and red droplets are worth points; catching a clean drop subtracts
 	// points, but the score is not allowed to fall below zero.
 	if (droplets[dropletIndex].isDirty) {
-		score += 10;
+		score += 15;
 	} else {
 		score = Math.max(0, score - 5);
 	}
@@ -218,13 +222,18 @@ function checkTankCollisions() {
 			if (droplet.isDirty) {
 				// Dirty water adds time to the countdown. Red water uses a larger
 				// multiplier, and every dirty drop increases future contamination.
+				score = Math.max(0, score - 20);
+				updateScore();
 				dirtyDropHitTank = true;
 				timeRemaining += contaminationMultiplier * droplet.timeMultiplier;
 				contaminationMultiplier += 1;
+				updateLateGameSpeed();
 				renderTimer();
 				updateContaminationMultiplier();
 			} else {
-				// A clean drop lowers the multiplier, but it cannot go below 1.
+				// A clean drop scores points and lowers the multiplier, but it cannot go below 1.
+				score += 10;
+				updateScore();
 				contaminationMultiplier = Math.max(1, contaminationMultiplier - 1);
 				updateContaminationMultiplier();
 			}
@@ -267,15 +276,7 @@ function updateTimer() {
 	// Update what the player sees before checking the win/loss conditions.
 	renderTimer();
 
-	// Increase the challenge once the countdown reaches 7 seconds.
-	if (!lateGameStarted && timeRemaining <= 7 && timeRemaining > 0) {
-		lateGameStarted = true;
-		clearInterval(spawnInterval);
-		spawnInterval = setInterval(spawnDroplet, 450);
-		droplets.forEach((droplet) => {
-			droplet.speed *= 1.5;
-		});
-	}
+	updateLateGameSpeed();
 
 	// Reaching zero means the player survived the countdown. Reaching the
 	// contamination limit means the player lost.
@@ -284,6 +285,23 @@ function updateTimer() {
 	} else if (timeRemaining >= 60) {
 		endGame(false);
 	}
+}
+
+// Speed up at 7 seconds and stay sped up until contamination raises the timer above 12.
+function updateLateGameSpeed() {
+	const shouldSpeedUp = !easyMode && (lateGameStarted ? timeRemaining <= 12 : timeRemaining <= 7);
+
+	// Avoid resetting the spawn timer when the difficulty state has not changed.
+	if (shouldSpeedUp === lateGameStarted) {
+		return;
+	}
+
+	lateGameStarted = shouldSpeedUp;
+	clearInterval(spawnInterval);
+	spawnInterval = setInterval(spawnDroplet, lateGameStarted ? 450 : 850);
+	droplets.forEach((droplet) => {
+		droplet.speed *= lateGameStarted ? 1.5 : 1 / 1.5;
+	});
 }
 
 // Display the current time without changing the timer value itself.
@@ -326,6 +344,7 @@ function endGame(playerWon) {
 	messageBox.hidden = false;
 	startButton.hidden = true;
 	restartButton.hidden = false;
+	difficultySelect.disabled = false;
 }
 
 // Start a new round when the start or replay button is activated.
