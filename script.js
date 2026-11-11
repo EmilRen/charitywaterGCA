@@ -1,6 +1,4 @@
 // Find the game area and the score, timer, and multiplier elements in the HTML.
-// Keeping these references lets the game update the page without searching for
-// the same elements every time something changes.
 const gameArea = document.querySelector('#game-area');
 const scoreDisplay = document.querySelector('#score');
 const timeDisplay = document.querySelector('#time');
@@ -18,7 +16,6 @@ const restartButton = document.querySelector('#restart-button');
 const waterTank = document.querySelector('#water-tank');
 const difficultySelect = document.querySelector('#difficulty-select');
 
-// These variables keep track of the game's current state and displayed values.
 let score = 0;
 let timeRemaining = 30;
 let contaminationMultiplier = 1;
@@ -26,12 +23,11 @@ let dirtyDropHitTank = false;
 let lateGameStarted = false;
 let easyMode = false;
 
-// Store each active droplet here so the game can move it, check it, and remove it.
+// Stores active droplets
 let droplets = [];
 let gameIsRunning = false;
 
 // These variables hold the IDs returned by the timers and animation loop.
-// The IDs are used later to stop those repeating tasks.
 let timerInterval;
 let spawnInterval;
 let animationFrame;
